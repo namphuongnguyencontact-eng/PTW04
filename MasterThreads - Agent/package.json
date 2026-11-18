@@ -1,0 +1,40 @@
+{
+  "name": "threads-app",
+  "version": "0.1.0",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "crawl:live": "tsx scripts/live_feed_crawler.ts",
+    "electron:dev": "node electron/dev.js",
+    "electron:start": "electron ."
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "clsx": "^2.1.1",
+    "docx": "^9.12.0",
+    "lucide-react": "^1.57.0",
+    "next": "16.4.1",
+    "puppeteer-core": "^25.14.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "concurrently": "^10.0.6",
+    "electron": "^44.7.2",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.1",
+    "prisma": "^6.19.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

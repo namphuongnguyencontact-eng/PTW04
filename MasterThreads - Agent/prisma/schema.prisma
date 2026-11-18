@@ -1,0 +1,183 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  color       String?   @default("#84A282")
+  icon        String?   @default("Folder")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id                 String         @id @default(cuid())
+  name               String
+  categoryId         String
+  category           Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  brand              String?
+  description        String
+  problemsSolved     String?        // JSON array of strings
+  targetAudience     String?        // JSON array of strings
+  typicalSituations  String?        // JSON array of strings
+  keywords           String?        // JSON array of strings
+  synonyms           String?        // JSON array of strings
+  negativeKeywords   String?        // JSON array of strings
+  price              Float?
+  affiliateUrl       String?
+  originalUrl        String?
+  platform           String         @default("Shopee")
+  notes              String?
+  status             String         @default("ACTIVE") // ACTIVE | INACTIVE
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  productMatches     ProductMatch[]
+}
+
+model ScanCampaign {
+  id                 String        @id @default(cuid())
+  name               String
+  topic              String
+  mainKeywords       String?       // JSON array of strings
+  secondaryKeywords  String?       // JSON array of strings
+  language           String        @default("vi")
+  dateRange          String?
+  targetPostsCount   Int           @default(30)
+  minEngagement      Int           @default(50)
+  targetCategoryIds  String?       // JSON array of category IDs
+  status             String        @default("PENDING") // PENDING | RUNNING | ANALYZING | COMPLETED | PARTIAL | FAILED | NOT_CONFIGURED
+  collectedCount     Int           @default(0)
+  validCount         Int           @default(0)
+  analyzedCount      Int           @default(0)
+  errorCount         Int           @default(0)
+  errorMessage       String?
+  startedAt          DateTime?
+  completedAt        DateTime?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  posts              ThreadsPost[]
+}
+
+model ThreadsPost {
+  id                 String                 @id @default(cuid())
+  threadsPostId      String                 @unique
+  postUrl            String
+  authorUsername     String
+  authorName         String?
+  authorAvatarUrl    String?
+  content            String
+  publishedAt        DateTime
+  source             String                 @default("MANUAL_URL") // API | MANUAL_URL | CSV_IMPORT | DEMO_SEED
+  campaignId         String?
+  campaign           ScanCampaign?          @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  likesCount         Int                    @default(0)
+  repliesCount       Int                    @default(0)
+  repostsCount       Int                    @default(0)
+  quotesCount        Int                    @default(0)
+  viewsCount         Int?
+  engagementCount    Int                    @default(0)
+  engagementRate     Float?
+  viralScore         Float                  @default(0)
+  viralClassification String                @default("POTENTIAL") // VIRAL_SUPERIOR | HIGH_ENGAGEMENT | GROWING | POTENTIAL | LOW_ENGAGEMENT
+  viralExplanation   String?
+  analysisStatus     String                 @default("UNANALYZED") // UNANALYZED | ANALYZING | ANALYZED | FAILED
+  maxOpportunityScore Float                 @default(0)
+  isSaved            Boolean                @default(false)
+  isDismissed        Boolean                @default(false)
+  userNotes          String?
+  userTags           String?                // JSON array of tags
+  userStatus         String                 @default("NEW") // NEW | RESEARCHED | EXPLOITED | DISMISSED
+  actualConversionNotes String?
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  comments           PostComment[]
+  analysis           PostAnalysis?
+  productMatches     ProductMatch[]
+  snapshots          PostMetricsSnapshot[]
+}
+
+model PostMetricsSnapshot {
+  id              String      @id @default(cuid())
+  postId          String
+  post            ThreadsPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  likesCount      Int         @default(0)
+  repliesCount    Int         @default(0)
+  repostsCount    Int         @default(0)
+  quotesCount     Int         @default(0)
+  viewsCount      Int?
+  capturedAt      DateTime    @default(now())
+}
+
+model PostComment {
+  id             String      @id @default(cuid())
+  postId         String
+  post           ThreadsPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commentId      String?
+  authorUsername String
+  content        String
+  likesCount     Int         @default(0)
+  publishedAt    DateTime?
+  createdAt      DateTime    @default(now())
+}
+
+model PostAnalysis {
+  id                       String      @id @default(cuid())
+  postId                   String      @unique
+  post                     ThreadsPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postSummary              String
+  mainTopics               String      // JSON array
+  subTopics                String?     // JSON array
+  postIntent               String      // experience_sharing | qna | complaint | storytelling | review | tutorial | discussion | entertainment
+  painPoints               String      // JSON array of {description, evidence, confidence}
+  audienceNeeds            String      // JSON array of {description, evidence_source, confidence}
+  dominantEmotion          String?
+  affiliateSuitability     String      @default("MEDIUM") // HIGH | MEDIUM | LOW | UNSUITABLE
+  forcedPromotionRisk      String?
+  commentInsightsAvailable Boolean     @default(false)
+  commentAnalyzedCount     Int         @default(0)
+  commentThemes            String?     // JSON array
+  commentQuestions         String?     // JSON array
+  commentObjections        String?     // JSON array
+  commentLimitations       String?     // JSON array
+  overallOpportunityScore  Float       @default(0)
+  analysisLimitations      String?     // JSON array
+  analyzedAt               DateTime    @default(now())
+}
+
+model ProductMatch {
+  id                   String      @id @default(cuid())
+  postId               String
+  post                 ThreadsPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  productId            String
+  product              Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  relevanceScore       Float
+  problemFitScore      Float
+  intentScore          Float
+  contextFitScore      Float
+  commentEvidenceScore Float?
+  confidence           Float       @default(0.85)
+  opportunityScore     Float
+  matchType            String      @default("CONTEXTUAL_FIT") // DIRECT_FIT | CONTEXTUAL_FIT | LATENT_NEED | COMMENT_DEMAND | WEAK_RELEVANCE | UNSUITABLE
+  reason               String
+  evidence             String?     // JSON array of {source, text}
+  affiliateAngle       String
+  riskNotes            String?     // JSON array of strings
+  priority             String      @default("MEDIUM") // HIGH | MEDIUM | LOW
+  createdAt            DateTime    @default(now())
+}
+
+model AppSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   // Text or serialized JSON
+  updatedAt DateTime @updatedAt
+}
