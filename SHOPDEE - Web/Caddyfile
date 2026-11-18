@@ -1,0 +1,29 @@
+(shopdee_app) {
+    encode gzip zstd
+
+    handle /uploads/* {
+        root * "c:/Users/Administrator/Shopdee/public"
+        file_server
+    }
+
+    handle {
+        reverse_proxy 127.0.0.1:3000
+    }
+}
+
+# Truy cập trực tiếp qua địa chỉ IP máy chủ hoặc localhost bằng HTTP (cổng 80)
+http://116.118.9.158, http://localhost {
+    import shopdee_app
+}
+
+# Truy cập qua địa chỉ IP máy chủ bằng HTTPS (chứng chỉ nội bộ)
+https://116.118.9.158 {
+    tls internal
+    import shopdee_app
+}
+
+# Tên miền chính thức với chứng chỉ SSL tự động (Let's Encrypt / ZeroSSL)
+shopdeevn.online, www.shopdeevn.online {
+    import shopdee_app
+}
+
