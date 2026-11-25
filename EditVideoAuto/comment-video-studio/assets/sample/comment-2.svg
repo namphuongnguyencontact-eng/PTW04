@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <rect width="720" height="520" rx="28" fill="#fff"/>
+  <circle cx="80" cy="80" r="46" fill="#86efac"/>
+  <text x="145" y="76" font-family="Arial" font-size="40" font-weight="700" fill="#111827">Bình luận mẫu 2</text>
+  <text x="145" y="112" font-family="Arial" font-size="23" fill="#6b7280">@banbe · 5 phút</text>
+  <text x="48" y="205" font-family="Arial" font-size="30" fill="#1f2937">Ảnh cao hơn vẫn phải hiển thị</text>
+  <text x="48" y="250" font-family="Arial" font-size="30" fill="#1f2937">đầy đủ, không bị crop.</text>
+  <rect x="48" y="300" width="624" height="120" rx="15" fill="#f3f4f6"/>
+  <text x="72" y="370" font-family="Arial" font-size="25" fill="#4b5563">Khối minh họa trong comment</text>
+  <text x="48" y="476" font-family="Arial" font-size="23" fill="#6b7280">♡ 1.204 lượt thích</text>
+</svg>

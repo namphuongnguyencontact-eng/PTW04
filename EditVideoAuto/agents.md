@@ -1,0 +1,2 @@
+- sau mỗi lần thay đổi phải tạo 1 commit git tương ứng để sau này còn theo dõi và khôi phục
+- sau mỗi lần thay đổi phải đều phải viết hoặc cập nhật các bài test liên quan và trước khi giao cho người dùng phải đảm bảo các bài test và nghiệm thu đều đạt
